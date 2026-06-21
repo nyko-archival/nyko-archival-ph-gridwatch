@@ -186,13 +186,25 @@ h1 {
 }
 
 /* ===== SIDEBAR – complete redesign around st.radio nav ===== */
+/* Keep the sidebar permanently expanded. In this Streamlit build the collapsed
+   "expand" control does not render, so once collapsed the sidebar gets stuck at
+   ~1px with no way to reopen it (it looks gone). We force it open and hide the
+   collapse arrow so a user can never get stranded. */
 [data-testid="stSidebar"] {
     background: #000000 !important;
     width: 200px !important;
+    min-width: 200px !important;
+    transform: none !important;
+    visibility: visible !important;
     border-right: 1px solid var(--border-subtle) !important;
     overflow-x: hidden !important;
     overflow-y: auto !important;
     scrollbar-width: none !important;
+}
+
+/* Hide the collapse (\00ab) arrow in the sidebar header. */
+[data-testid="stSidebarHeader"] button {
+    display: none !important;
 }
 
 [data-testid="stSidebar"]::-webkit-scrollbar {

@@ -27,7 +27,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-load_css("styles.css")  # css-reload-bump 5
+load_css("styles.css")  # css-reload-bump 7
 
 from views import (
     Demand, EnergySecurity, Executive, Generation,
