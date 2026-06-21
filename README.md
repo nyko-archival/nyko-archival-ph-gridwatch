@@ -2,7 +2,7 @@
 
 **A national energy intelligence platform for the Philippine power sector.**
 
-**[▶ Live demo](https://ph-gridwatch.streamlit.app)**
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://ph-gridwatch.streamlit.app) &nbsp; **[▶ Live demo](https://ph-gridwatch.streamlit.app)**
 
 PH GridWatch turns NGCP's publicly disclosed operations data into interactive views that make thirteen years of grid history readable, covering demand growth, generation mix, the renewable transition, system loss, regional consumption, energy security, and policy.
 
