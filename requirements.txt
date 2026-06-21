@@ -7,3 +7,4 @@ xlrd>=2.0.1
 scikit-learn>=1.2.0
 shapely>=2.0.0
 pyproj>=3.5.0
+matplotlib>=3.7.0
