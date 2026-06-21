@@ -1,0 +1,4125 @@
+/* ============================================================
+   PH GridWatch – Production Readiness Final CSS
+   All 13 layers: KPI hierarchy, status bar, map compression,
+   panel density, chart fonts, regional asymmetry,
+   policy hierarchy, export compactness, spacing scale
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0,1');
+
+:root {
+    /* Colors – design system spec */
+    --bg-page: #000000;
+    --bg-surface: #070D19;
+    --bg-surface-secondary: #0E172C;
+    --border-subtle: rgba(30, 43, 71, 0.5);
+    --text-primary: #F8FAFC;
+    --text-secondary: #A8B8C8;
+    --text-muted: #7A8FA6;
+
+    --accent: #0066FF;
+    --accent-glow: rgba(0, 102, 255, 0.12);
+    --success: #10B981;
+    --warning: #F59E0B;
+    --danger: #EF4444;
+    --neutral: #8B98A5;
+
+    /* Grid identity colors */
+    --grid-luzon: #00C2FF;
+    --grid-visayas: #F4A261;
+    --grid-mindanao: #2DC653;
+
+    /* Spacing scale */
+    --space-4: 4px;
+    --space-8: 8px;
+    --space-12: 12px;
+    --space-16: 16px;
+    --space-24: 24px;
+    --space-32: 32px;
+
+    /* Legacy aliases kept for backward compat */
+    --space-6: 6px;
+    --space-10: 10px;
+    --space-20: 20px;
+
+    --radius-control: 4px;
+    --radius-panel: 6px;
+
+    /* Chart height standards */
+    --chart-small: 240px;
+    --chart-medium: 320px;
+    --chart-large: 420px;
+
+    /* Map height */
+    --map-plot-height: 580px;
+    --region-card-min-height: 170px;
+    --policy-card-min-height: 175px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body,
+[class*="css"] {
+    font-family: 'Inter', sans-serif !important;
+    background-color: var(--bg-page) !important;
+    color: var(--text-primary);
+}
+
+[data-testid="stAppViewContainer"] {
+    background: linear-gradient(rgba(0, 102, 255, 0.0075) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 102, 255, 0.006) 1px, transparent 1px),
+        var(--bg-page) !important;
+    background-size: 32px 32px !important;
+}
+
+[data-testid="stHeader"],
+[data-testid="stToolbar"],
+[data-testid="stDecoration"],
+#MainMenu,
+footer {
+    display: none !important;
+}
+
+.kpi-card-value,
+.readiness-score,
+.metric-value,
+.trend-summary-value {
+    font-family: 'JetBrains Mono', monospace !important;
+    font-weight: 700 !important;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ===== LAYOUT – spacing scale only ===== */
+.block-container {
+    max-width: 100% !important;
+    padding: var(--space-16) var(--space-16) var(--space-16) var(--space-16) !important;
+    margin: 0 !important;
+}
+
+.st-emotion-cache-z5fcl4 {
+    position: relative;
+    top: -62px;
+}
+
+div[data-testid="stVerticalBlock"] {
+    gap: var(--space-16) !important;
+}
+
+div[data-testid="stVerticalBlock"]>div {
+    margin-bottom: 0 !important;
+}
+
+.element-container,
+.stMarkdown,
+.stPlotlyChart {
+    margin-bottom: 0 !important;
+}
+
+div[data-testid="column"] {
+    margin-bottom: 0 !important;
+}
+
+/* Tight gap after map */
+.section-header:has(+ div[data-testid="column"]) {
+    margin-bottom: var(--space-12) !important;
+}
+
+div[data-testid="column"]:has(.map-column-marker)+div {
+    margin-top: 0 !important;
+}
+
+.section-header:has(+ div[data-testid="stHorizontalBlock"]) {
+    margin-top: var(--space-8) !important;
+}
+
+/* ===== TYPOGRAPHY – unified section headers ===== */
+h1 {
+    font-size: 52px !important;
+    font-weight: 800 !important;
+    letter-spacing: -1px;
+    line-height: 1.0 !important;
+    margin-bottom: var(--space-4) !important;
+    color: var(--text-primary);
+    text-transform: uppercase;
+}
+
+.page-description {
+    font-size: 11px !important;
+    font-weight: 600;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: var(--space-16) !important;
+}
+
+.section-header {
+    font-size: 22px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.6px !important;
+    text-transform: uppercase;
+    margin-top: 28px !important;
+    margin-bottom: 14px !important;
+    padding-bottom: var(--space-6) !important;
+    border-bottom: 2px solid var(--accent) !important;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+}
+
+.section-header::after {
+    content: '';
+    flex: 0 0 32px;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.65;
+}
+
+.section-header:first-of-type {
+    margin-top: 0 !important;
+}
+
+/* ===== SIDEBAR – complete redesign around st.radio nav ===== */
+[data-testid="stSidebar"] {
+    background: #000000 !important;
+    width: 200px !important;
+    border-right: 1px solid var(--border-subtle) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    scrollbar-width: none !important;
+}
+
+[data-testid="stSidebar"]::-webkit-scrollbar {
+    display: none !important;
+}
+
+[data-testid="stSidebar"]>div,
+[data-testid="stSidebar"]>div>div,
+[data-testid="stSidebar"]>div>div>div {
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+}
+
+/* Trim the tall empty sidebar header band (it holds the « collapse button) so
+   the brand sits close under it — but keep enough height that the collapse /
+   expand button stays visible and clickable (don't zero its height, that hid
+   the button and broke re-opening the sidebar). */
+[data-testid="stSidebarHeader"] {
+    padding-top: 8px !important;
+    padding-bottom: 0 !important;
+}
+
+[data-testid="stSidebarContent"] {
+    padding: 4px 14px 20px 14px !important;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
+    gap: 8px !important;
+}
+
+/* ── Brand ── */
+.sb-brand {
+    padding-bottom: 6px;
+    margin-bottom: 2px;
+    border-bottom: 1px solid var(--border-subtle);
+    margin-top: -4px;
+}
+
+.sb-brand-name {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+.sb-brand-ver {
+    font-size: 8px;
+    font-weight: 700;
+    color: var(--accent);
+    opacity: 0.8;
+    letter-spacing: 0.3px;
+}
+
+.sb-brand-sub {
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--accent);
+    opacity: 0.7;
+    margin-top: 2px;
+    line-height: 1.3;
+}
+
+.sb-brand-author {
+    font-size: 8px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    letter-spacing: 0.2px;
+}
+
+/* ── Selectbox labels ── */
+[data-testid="stSidebar"] label,
+[data-testid="stSidebar"] [data-testid="stWidgetLabel"] p {
+    font-size: 8px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    color: var(--text-muted) !important;
+    margin-bottom: 1px !important;
+    line-height: 1.2 !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stSelectbox"] {
+    margin-bottom: 4px !important;
+}
+
+/* ── Compact selectbox (all depth variants) ── */
+[data-testid="stSidebar"] [data-baseweb="select"] {
+    border-radius: 4px !important;
+}
+
+[data-testid="stSidebar"] [data-baseweb="select"]>div {
+    min-height: 26px !important;
+    height: 26px !important;
+    border-radius: 4px !important;
+    padding: 0 6px !important;
+}
+
+[data-testid="stSidebar"] [data-baseweb="select"]>div>div {
+    min-height: 26px !important;
+    padding: 0 !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    color: var(--text-primary) !important;
+    line-height: 26px !important;
+}
+
+[data-testid="stSidebar"] [data-baseweb="select"] svg {
+    width: 11px !important;
+    height: 11px !important;
+}
+
+/* The "||" in the Year/Grid dropdowns is TWO things stacked: the focused text
+   caret of Streamlit's searchable selectbox input, and the mouse text I-beam
+   sitting in the field. Kill BOTH across the whole sidebar (caret-color only
+   affects text carets, so it's harmless elsewhere), and collapse + disable the
+   search input so it can't be focused or show a caret at all. */
+[data-testid="stSidebar"],
+[data-testid="stSidebar"] * {
+    caret-color: transparent !important;
+}
+[data-testid="stSidebar"] [data-baseweb="select"],
+[data-testid="stSidebar"] [data-baseweb="select"] *,
+[data-testid="stSidebar"] [data-testid="stSelectbox"],
+[data-testid="stSidebar"] [data-testid="stSelectbox"] * {
+    cursor: pointer !important;
+}
+/* Make the typeable search input zero-width and unfocusable — these dropdowns
+   only need click-to-select, so there is no input to host a caret. */
+[data-testid="stSidebar"] [data-baseweb="select"] input,
+[data-testid="stSidebar"] [data-testid="stSelectbox"] input {
+    caret-color: transparent !important;
+    color: transparent !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    flex: 0 0 0 !important;
+    padding: 0 !important;
+    pointer-events: none !important;
+}
+
+/* On focus, BaseWeb applies a 1.5px near-white outline (#F8FAFC) to the inner
+   value-container divs — the left/right edges render as two vertical bars right
+   after the text, producing the "||" glitch. Kill all outlines inside the select;
+   the existing blue focus BORDER remains as the (intended) focus indicator. */
+[data-testid="stSidebar"] [data-baseweb="select"],
+[data-testid="stSidebar"] [data-baseweb="select"] *,
+[data-testid="stSidebar"] [data-baseweb="select"] *:focus,
+[data-testid="stSidebar"] [data-baseweb="select"] *:focus-visible,
+[data-testid="stSidebar"] [data-baseweb="select"] *:focus-within {
+    outline: none !important;
+}
+
+/* The BaseWeb Select popover renders in a top-level portal (outside the sidebar
+   testid scope). Hide the search input row and its container inside the dropdown
+   so the open menu shows only the clickable list, no search field. */
+[data-baseweb="popover"] [data-baseweb="input"],
+[data-baseweb="popover"] [data-baseweb="input"] *,
+[data-baseweb="popover"] input[type="text"] {
+    display: none !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
+
+/* ── Nav label ── */
+.sb-nav-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 12px 0 6px 0;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 12px;
+}
+
+/* ── Radio nav – hide bullet, style label as nav row ── */
+[data-testid="stSidebar"] [data-testid="stRadio"] {
+    gap: 0 !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stRadio"]>div {
+    gap: 2px !important;
+    flex-direction: column !important;
+}
+
+/* Hide the radio circle completely */
+[data-testid="stSidebar"] [data-testid="stRadio"] input[type="radio"] {
+    display: none !important;
+}
+
+/* Label = nav row */
+[data-testid="stSidebar"] [data-testid="stRadio"] label {
+    display: flex !important;
+    align-items: center !important;
+    height: 26px !important;
+    min-height: 26px !important;
+    max-height: 26px !important;
+    padding: 0 8px !important;
+    margin: 0 !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    color: var(--text-secondary) !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease !important;
+    letter-spacing: 0.2px !important;
+    line-height: 26px !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
+    background: rgba(255, 255, 255, 0.04) !important;
+    color: var(--text-primary) !important;
+    border-color: rgba(30, 43, 71, 0.5) !important;
+}
+
+/* Selected radio label */
+[data-testid="stSidebar"] [data-testid="stRadio"] label[data-selected="true"],
+[data-testid="stSidebar"] [data-testid="stRadio"] input[type="radio"]:checked~div label,
+[data-testid="stSidebar"] [data-testid="stRadio"] [aria-checked="true"]~label,
+[data-testid="stSidebar"] [data-testid="stRadio"] div:has(input:checked) label {
+    background: linear-gradient(90deg, rgba(0, 102, 255, 0.18), rgba(0, 102, 255, 0.06)) !important;
+    border-color: rgba(0, 102, 255, 0.35) !important;
+    border-left: 2px solid var(--accent) !important;
+    color: var(--text-primary) !important;
+    font-weight: 600 !important;
+}
+
+/* Hide the radio widget's own label (we render .sb-nav-label above it) */
+[data-testid="stSidebar"] [data-testid="stRadio"]>label {
+    display: none !important;
+}
+
+/* ── Footer ── */
+.sb-footer {
+    border-top: 1px solid var(--border-subtle);
+    margin-top: 6px;
+    padding-top: 5px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.sb-footer tr {
+    line-height: 1.5;
+}
+
+.sb-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 4px;
+    margin-top: 2px;
+    line-height: 1.3;
+}
+
+.sb-k {
+    font-size: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--text-muted);
+    opacity: 0.65;
+    flex-shrink: 0;
+}
+
+.sb-v {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sb-v.hi {
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] {
+    overflow: visible !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] hr {
+    margin: var(--space-8) 0 !important;
+    border-color: var(--border-subtle) !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stCaptionContainer"] {
+    font-size: 10px !important;
+    line-height: 1.2 !important;
+}
+
+
+[data-testid="stSidebar"] [data-testid="stWidgetLabel"] {
+    min-height: 18px !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stSlider"] {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stSlider"] label {
+    color: var(--text-secondary) !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    line-height: 1.15 !important;
+}
+
+/* ===== KPI CARDS – strict hierarchy ===== */
+.kpi-card {
+    background: linear-gradient(180deg, #07101e 0%, #050913 100%);
+    border-radius: 7px;
+
+    padding: 16px;
+
+    border: 1px solid var(--border-subtle);
+
+    display: flex;
+    flex-direction: column;
+
+    min-height: 140px;
+
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.025),
+        0 2px 8px rgba(0, 0, 0, 0.42);
+
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.kpi-card:hover {
+    border-color: rgba(0, 102, 255, 0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--accent-glow);
+}
+
+.kpi-card:hover::before {
+    opacity: 1;
+}
+
+.kpi-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-8);
+    margin-bottom: var(--space-4);
+    min-height: 20px;
+}
+
+.kpi-card-label {
+    font-size: 11px !important;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    line-height: 1.15;
+}
+
+.kpi-card-value-container {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: nowrap;
+    gap: 6px;
+    margin-bottom: var(--space-4);
+    min-height: 28px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.kpi-card-value {
+    font-size: 40px !important;
+    line-height: 1.0;
+    letter-spacing: -0.5px;
+    white-space: nowrap;
+}
+
+.kpi-card-unit {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.kpi-card-commentary {
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.25;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: var(--space-4);
+    margin-bottom: var(--space-4);
+    flex: 1;
+}
+
+.kpi-card-trend-container {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    margin-top: auto;
+    min-height: 16px;
+}
+
+/* ── Executive compact variant (7-card row) ─────────────────────────── */
+.kpi-card--exec {
+    padding: 11px 12px !important;
+    min-height: 112px !important;
+}
+
+.kpi-card--exec .kpi-card-label {
+    font-size: 9px !important;
+    letter-spacing: 1.2px;
+}
+
+.kpi-card--exec .kpi-card-value {
+    font-size: 24px !important;
+    letter-spacing: -0.5px;
+    white-space: nowrap;
+}
+
+.kpi-card--exec .kpi-card-unit {
+    font-size: 11px;
+}
+
+.kpi-card--exec .kpi-card-commentary {
+    font-size: 9px !important;
+    line-height: 1.3;
+}
+
+.kpi-card--exec .kpi-card-trend-container {
+    font-size: 9px;
+    min-height: 14px;
+}
+
+.kpi-card--exec .status-badge {
+    font-size: 8px !important;
+    padding: 1px 5px !important;
+}
+
+.kpi-card--exec .kpi-icon-wrap svg {
+    width: 12px !important;
+    height: 12px !important;
+}
+
+.kpi-label {
+    color: var(--text-secondary);
+    font-size: 11px !important;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    line-height: 1.2;
+    min-height: 14px;
+    text-transform: uppercase;
+}
+
+.kpi-value {
+    color: var(--text-primary);
+    display: block;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 36px !important;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.0;
+    letter-spacing: -0.5px;
+    margin: 4px 0 4px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.kpi-sub {
+    border-top: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    display: block;
+    font-size: 12px !important;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-top: auto;
+    min-height: 14px;
+    padding-top: 4px;
+}
+
+.status-badge {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.status-badge.status-success {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10B981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-badge.status-warning {
+    background: rgba(245, 158, 11, 0.2);
+    color: #F59E0B;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.status-badge.status-danger {
+    background: rgba(239, 68, 68, 0.2);
+    color: #EF4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.status-badge.status-info {
+    background: rgba(0, 102, 255, 0.2);
+    color: #0066FF;
+    border: 1px solid rgba(0, 102, 255, 0.3);
+}
+
+/* ===== STATUS STRIP – left-to-right priority ===== */
+.briefing-strip {
+    background: linear-gradient(90deg, #07101e 0%, #0b1425 48%, #07101e 100%);
+    border-radius: var(--radius-panel);
+    padding: 0 var(--space-12) !important;
+    margin: var(--space-8) 0 var(--space-12) 0 !important;
+    height: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-16);
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.briefing-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    background: transparent !important;
+    padding: 0;
+    min-width: 0;
+}
+
+.briefing-item:first-child {
+    flex: 1.12 1 0;
+}
+
+.briefing-item:not(:first-child) {
+    flex: 1 1 0;
+}
+
+.briefing-text {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.briefing-value {
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+.briefing-item:first-child .briefing-text {
+    color: var(--text-secondary);
+}
+
+.briefing-item:first-child .briefing-value {
+    font-size: 13px !important;
+}
+
+/* ===== MAP SECTION – compressed height, zero margins ===== */
+div[data-testid="column"]:has(.map-column-marker) {
+    padding-right: var(--space-8) !important;
+}
+
+div[data-testid="column"]:has(.intel-panel) {
+    padding-left: var(--space-8) !important;
+}
+
+.map-header {
+    background: var(--bg-surface-secondary);
+    border: 1px solid var(--border-subtle);
+    border-bottom: none;
+    border-radius: var(--radius-panel) var(--radius-panel) 0 0;
+    padding: var(--space-8) var(--space-16);
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.map-title {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+
+.map-zoom-label {
+    height: 18px;
+    margin: 0 0 2px 0 !important;
+    color: var(--text-muted);
+    font-size: 10px !important;
+    font-weight: 800;
+    letter-spacing: 1.1px;
+    line-height: 18px;
+    text-align: right;
+    text-transform: uppercase;
+}
+
+div[data-testid="element-container"]:has(.map-zoom-label) {
+    background: var(--bg-surface-secondary);
+    border-top: 1px solid var(--border-subtle);
+    border-right: 1px solid var(--border-subtle);
+    border-radius: 0 var(--radius-panel) 0 0;
+    padding: 2px var(--space-12) 0 var(--space-8) !important;
+}
+
+div[data-testid="element-container"]:has(.map-zoom-label)+div[data-testid="element-container"] {
+    background: var(--bg-surface-secondary);
+    border-right: 1px solid var(--border-subtle);
+    border-bottom: none;
+    padding: 0 var(--space-12) 0 var(--space-8) !important;
+}
+
+div[data-testid="element-container"]:has(.map-zoom-label)+div[data-testid="element-container"] [data-testid="stSlider"] {
+    padding: 0 !important;
+}
+
+div[data-testid="element-container"]:has(.map-zoom-label)+div[data-testid="element-container"] [data-testid="stSlider"]>div {
+    padding: 0 !important;
+}
+
+div[data-testid="element-container"]:has(.map-zoom-label)+div[data-testid="element-container"] [data-testid="stSlider"] div[role="slider"] {
+    width: 12px !important;
+    height: 12px !important;
+    border: 2px solid var(--text-primary) !important;
+    box-shadow: 0 0 0 2px rgba(0, 102, 255, 0.22) !important;
+}
+
+div[data-testid="element-container"]:has(.map-zoom-label)+div[data-testid="element-container"] [data-testid="stSlider"] [data-testid="stTickBar"] {
+    display: none !important;
+}
+
+div[data-testid="element-container"]:has(.map-zoom-label)+div[data-testid="element-container"] [data-testid="stSlider"] p {
+    display: none !important;
+}
+
+div[data-testid="column"]:has(.map-column-marker) div[data-testid="stPlotlyChart"] {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-top: none;
+    border-radius: 0 0 var(--radius-panel) var(--radius-panel);
+    padding: 0 var(--space-6) !important;
+    overflow: hidden !important;
+}
+
+/* ── Map Layer Selector – Bloomberg/Palantir underline tabs ── */
+div.map-container-selector,
+div[data-testid="column"]:has(.map-column-marker) div[data-testid="stRadio"] {
+    background: var(--bg-surface-secondary);
+    border: 1px solid var(--border-subtle);
+    border-top: none;
+    padding: 0 var(--space-12) !important;
+}
+
+div.map-container-selector div[data-testid="stRadio"]>div,
+div[data-testid="column"]:has(.map-column-marker) div[data-testid="stRadio"]>div {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 0 !important;
+    border-bottom: 1px solid rgba(30, 43, 71, 0.9);
+}
+
+div.map-container-selector .stRadio label,
+div[data-testid="column"]:has(.map-column-marker) div[data-testid="stRadio"] label {
+    display: flex !important;
+    align-items: center !important;
+    font-size: 9px !important;
+    font-weight: 800 !important;
+    letter-spacing: 1.3px !important;
+    text-transform: uppercase !important;
+    padding: 9px 13px !important;
+    height: auto !important;
+    line-height: 1 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: rgba(142, 159, 175, 0.45) !important;
+    border-bottom: 2px solid transparent !important;
+    margin-bottom: -1px !important;
+    box-shadow: none !important;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.15s ease, border-color 0.15s ease !important;
+}
+
+/* Hide radio circle */
+div.map-container-selector .stRadio label>div:first-child,
+div[data-testid="column"]:has(.map-column-marker) div[data-testid="stRadio"] label>div:first-child {
+    display: none !important;
+}
+
+div.map-container-selector .stRadio label:hover,
+div[data-testid="column"]:has(.map-column-marker) div[data-testid="stRadio"] label:hover {
+    color: var(--text-secondary) !important;
+    background: transparent !important;
+    border-bottom-color: rgba(96, 165, 250, 0.3) !important;
+    box-shadow: none !important;
+}
+
+div.map-container-selector .stRadio label:has(input:checked),
+div[data-testid="column"]:has(.map-column-marker) div[data-testid="stRadio"] label:has(input:checked) {
+    color: #E2EEFF !important;
+    background: transparent !important;
+    border-bottom-color: #60A5FA !important;
+    box-shadow: none !important;
+}
+
+/* ===== INTELLIGENCE PANEL – standardized 16px padding ===== */
+.intel-panel {
+    background: linear-gradient(180deg, #07101e 0%, #050913 100%);
+    border-radius: var(--radius-panel);
+    border: 1px solid var(--border-subtle);
+    padding: var(--space-16) !important;
+    min-height: calc(var(--map-plot-height) + 78px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.intel-section {
+    margin: 0 0 var(--space-6) 0 !important;
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.intel-section:first-child {
+    margin-top: 0 !important;
+}
+
+.intel-section:last-child {
+    margin-bottom: 0 !important;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.intel-section-title {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--text-secondary);
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    letter-spacing: 1.2px;
+    margin-bottom: var(--space-8) !important;
+    padding-left: var(--space-8);
+    border-left: 3px solid var(--accent);
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+/* Quick Intelligence – lower visual weight */
+.intel-quick {
+    opacity: 0.85;
+}
+
+.intel-quick .hotspot-item {
+    font-weight: 400 !important;
+}
+
+.finding-item,
+.hotspot-item {
+    background: rgba(255, 255, 255, 0.018);
+    border: 1px solid rgba(30, 43, 71, 0.32);
+    padding: var(--space-6) var(--space-8) !important;
+    margin-bottom: var(--space-4) !important;
+    border-radius: var(--radius-control);
+    transition: all 0.2s ease;
+}
+
+.finding-item:hover,
+.hotspot-item:hover {
+    background: rgba(0, 102, 255, 0.08);
+    transform: translateX(2px);
+}
+
+.finding-label,
+.finding-text b {
+    display: block;
+    color: var(--text-muted);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.9px;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+}
+
+.finding-value {
+    color: var(--text-primary);
+    display: block;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 12px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.hotspot-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-8);
+    font-size: 12px !important;
+}
+
+.hotspot-name {
+    color: var(--text-secondary);
+    font-size: 12px !important;
+    font-weight: 600;
+}
+
+.hotspot-status {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 11px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    gap: var(--space-4);
+}
+
+.hotspot-status::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.hotspot-status.positive::before {
+    background-color: var(--success);
+    box-shadow: 0 0 4px var(--success);
+}
+
+.hotspot-status.negative::before {
+    background-color: var(--danger);
+    box-shadow: 0 0 4px var(--danger);
+}
+
+.hotspot-status.neutral::before {
+    background-color: var(--warning);
+    box-shadow: 0 0 4px var(--warning);
+}
+
+.hotspot-status.high {
+    color: var(--danger);
+}
+
+.hotspot-status.medium {
+    color: var(--warning);
+}
+
+.hotspot-status.low {
+    color: var(--success);
+}
+
+.readiness-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-8);
+}
+
+.readiness-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-control);
+    padding: var(--space-6) var(--space-4) !important;
+    min-height: 68px;
+    text-align: left;
+}
+
+.readiness-card:first-child {
+    grid-column: span 2;
+}
+
+.readiness-label {
+    color: var(--text-muted);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.readiness-score {
+    display: block;
+    font-size: 28px !important;
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 3px 0;
+}
+
+.readiness-status {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    display: inline-block;
+    text-transform: uppercase;
+}
+
+.readiness-status.status-success {
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--success);
+    border: 1px solid rgba(16, 185, 129, 0.28);
+}
+
+.readiness-status.status-warning {
+    background: rgba(217, 119, 6, 0.12);
+    color: var(--warning);
+    border: 1px solid rgba(217, 119, 6, 0.28);
+}
+
+.readiness-status.status-danger {
+    background: rgba(220, 38, 38, 0.12);
+    color: var(--danger);
+    border: 1px solid rgba(220, 38, 38, 0.28);
+}
+
+/* ===== CHARTS – increased font sizes (10-15%) ===== */
+.js-plotly-plot .plotly .main-svg {
+    height: 100% !important;
+}
+
+div[data-testid="stPlotlyChart"] {
+    border: none;
+    background: transparent;
+}
+
+.g-xtick text,
+.g-ytick text,
+.legendtext {
+    fill: rgba(248, 250, 252, 0.9) !important;
+    font-size: 12px !important;
+}
+
+.g-xtitle text,
+.g-ytitle text {
+    fill: rgba(248, 250, 252, 0.95) !important;
+    font-size: 13px !important;
+}
+
+.gridlayer .line {
+    stroke: rgba(255, 255, 255, 0.06) !important;
+}
+
+[data-testid="stCaptionContainer"] {
+    color: var(--text-muted) !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
+}
+
+[data-testid="stDataFrame"],
+[data-testid="stTable"] {
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-panel) !important;
+    overflow: hidden !important;
+}
+
+/* Typography shared by ALL buttons */
+[data-testid="stDownloadButton"] button,
+[data-testid="stButton"] button {
+    border-radius: 6px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.3px;
+}
+
+/* Download buttons get the explicit 40px height; regular stButton buttons do NOT */
+[data-testid="stDownloadButton"] button {
+    height: 40px !important;
+    min-height: 40px !important;
+    padding: 10px 16px !important;
+    background: rgba(0, 102, 255, 0.16) !important;
+    border: 1px solid rgba(0, 102, 255, 0.42) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-testid="stTabs"] button {
+    color: var(--text-secondary) !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+}
+
+[data-testid="stAlert"] {
+    background: rgba(14, 23, 44, 0.82) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-panel) !important;
+    color: var(--text-secondary) !important;
+}
+
+/* ===== REGIONAL CARDS – generation dominant, health score spaced ===== */
+.region-card {
+    background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(14, 23, 44, 0.9) 100%);
+    border-radius: var(--radius-panel);
+    padding: var(--space-12) !important;
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: var(--region-card-min-height) !important;
+    transition: all 0.2s ease;
+    border-top: 3px solid var(--border-subtle) !important;
+}
+
+.region-card.luzon {
+    border-top-color: var(--grid-luzon) !important;
+}
+
+.region-card.visayas {
+    border-top-color: var(--grid-visayas) !important;
+}
+
+.region-card.mindanao {
+    border-top-color: var(--grid-mindanao) !important;
+}
+
+.region-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+.region-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: var(--space-8);
+    margin-bottom: var(--space-8);
+}
+
+.region-card-name {
+    font-size: 14px !important;
+    font-weight: 700;
+}
+
+.region-card-status {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.region-card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-8) var(--space-12);
+    margin: var(--space-8) 0;
+}
+
+.metric-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+}
+
+.region-card-metric.primary .metric-label {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.region-card-metric.secondary .metric-label {
+    color: var(--text-secondary);
+}
+
+.region-card-metric.tertiary .metric-label {
+    color: var(--text-muted);
+}
+
+.metric-value.primary {
+    font-size: 20px !important;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.metric-value.secondary {
+    font-size: 14px !important;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.metric-value.tertiary {
+    font-size: 13px !important;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.metric-unit {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-left: 2px;
+}
+
+.metric-val-row {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+}
+
+.region-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: var(--space-8);
+    margin-top: auto !important;
+}
+
+.footer-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.risk-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+}
+
+.risk-badge.risk-critical {
+    background: rgba(220, 38, 38, 0.15);
+    color: var(--danger);
+}
+
+.risk-badge.risk-medium {
+    background: rgba(217, 119, 6, 0.15);
+    color: var(--warning);
+}
+
+.risk-badge.risk-low {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--success);
+}
+
+/* ===== POLICY CARDS – 3‑tier hierarchy ===== */
+.policy-card {
+    background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(14, 23, 44, 0.9) 100%);
+    border-radius: var(--radius-panel);
+    padding: var(--space-12) !important;
+    border: 1px solid var(--border-subtle);
+    border-left: 4px solid var(--accent);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12) !important;
+    min-height: var(--policy-card-min-height) !important;
+    transition: all 0.2s ease;
+}
+
+.policy-card.critical {
+    border-left-color: var(--danger);
+}
+
+.policy-card.emerging {
+    border-left-color: var(--warning);
+}
+
+.policy-card.opportunity {
+    border-left-color: var(--success);
+}
+
+.policy-card-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px !important;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding-bottom: var(--space-8);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.policy-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.policy-item-title {
+    font-size: 14px !important;
+    font-weight: 800 !important;
+    margin-bottom: 0;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.policy-item-impact {
+    font-size: 12px !important;
+    font-weight: 600;
+    line-height: 1.35;
+    margin-bottom: 0;
+    color: var(--text-secondary);
+}
+
+.policy-item-action {
+    font-size: 11px !important;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.2px;
+    line-height: 1.35;
+}
+
+/* ===== EXPORT SECTION – compact, reduced top padding ===== */
+.section-header.export-header {
+    margin-top: var(--space-8) !important;
+    margin-bottom: var(--space-8) !important;
+}
+
+.export-card-container {
+    display: flex;
+    gap: var(--space-12);
+    margin-top: var(--space-4) !important;
+}
+
+.export-card-container [data-testid="stDownloadButton"] button,
+.export-card-container [data-testid="stButton"] button {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.03)) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-panel) !important;
+    height: 40px !important;
+    padding: 10px var(--space-12) !important;
+    font-weight: 700 !important;
+    font-size: 11px !important;
+    line-height: 1.2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100% !important;
+    transition: all 0.18s ease !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+}
+
+.export-card-container [data-testid="stDownloadButton"] button::before {
+    content: none !important;
+}
+
+/* ===== STICKY PANEL & RESPONSIVE ===== */
+@media (min-width: 1025px) {
+    div[data-testid="column"]:has(.intel-panel) {
+        position: sticky !important;
+        top: var(--space-16) !important;
+        align-self: flex-start !important;
+    }
+}
+
+@media (max-width: 1024px) {
+    .intel-panel {
+        min-height: unset;
+    }
+
+    .region-card {
+        min-height: unset;
+    }
+}
+
+@media (max-width: 768px) {
+    .briefing-strip {
+        flex-wrap: wrap;
+        height: auto;
+        padding: var(--space-8) var(--space-16) !important;
+        gap: var(--space-8);
+    }
+
+    h1 {
+        font-size: 28px !important;
+    }
+
+    .section-header {
+        font-size: 15px !important;
+    }
+}
+
+/* ===== EXPORT CONTAINER BUTTONS ===== */
+.export-header+[data-testid="stHorizontalBlock"] button {
+    height: 40px !important;
+    padding: 10px 16px !important;
+    font-size: 12px !important;
+}
+
+/* ===== POLICY SCANABILITY ACCENTS ===== */
+.policy-card.critical .policy-card-title {
+    color: var(--danger) !important;
+}
+
+.policy-card.emerging .policy-card-title {
+    color: var(--warning) !important;
+}
+
+.policy-card.opportunity .policy-card-title {
+    color: var(--success) !important;
+}
+
+.policy-card.critical .policy-item-action {
+    color: #F87171 !important;
+}
+
+.policy-card.emerging .policy-item-action {
+    color: #FBBF24 !important;
+}
+
+.policy-card.opportunity .policy-item-action {
+    color: #34D399 !important;
+}
+
+/* ===== BRIEFING BANNER ===== */
+.executive-summary-banner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    background: linear-gradient(90deg, var(--bg-surface-secondary) 0%, rgba(14, 23, 44, 0.4) 100%);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-control);
+    padding: var(--space-8) var(--space-12) !important;
+    margin-bottom: var(--space-16) !important;
+    width: 100%;
+}
+
+.banner-tag {
+    background: rgba(0, 102, 255, 0.16);
+    color: var(--accent);
+    font-size: 9px !important;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.banner-text {
+    font-size: 12px !important;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+/* ===== FUEL MIX COMPACT GRID ===== */
+.fuel-mix-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-4) var(--space-6);
+    margin-top: var(--space-4);
+}
+
+.fuel-mix-item {
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(30, 43, 71, 0.25);
+    padding: var(--space-4) var(--space-6) !important;
+    border-radius: var(--radius-control);
+    text-align: center;
+}
+
+.fuel-mix-label {
+    display: block;
+    color: var(--text-muted);
+    font-size: 8px !important;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fuel-mix-value {
+    display: block;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 10px !important;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* ===== ENERGY TRANSITION TRACKER ===== */
+.transition-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-8);
+    margin-top: var(--space-4);
+}
+
+.transition-item {
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(30, 43, 71, 0.25);
+    padding: var(--space-6) var(--space-8) !important;
+    border-radius: var(--radius-control);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.transition-label {
+    display: block;
+    color: var(--text-muted);
+    font-size: 8.5px !important;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+
+.transition-value {
+    display: block;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 11px !important;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.transition-gap {
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 9.5px !important;
+    font-weight: 700;
+    margin-top: 1px;
+}
+
+.transition-gap.negative {
+    color: var(--danger);
+}
+
+.transition-gap.positive {
+    color: var(--success);
+}
+
+.banner-refresh {
+    font-size: 10px !important;
+    font-weight: 700;
+    color: var(--text-muted);
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-left: auto;
+}
+
+/* The map + panel row: top-align both columns. */
+div[data-testid="stHorizontalBlock"]:has(.map-col-fill) {
+    align-items: flex-start !important;
+}
+
+/* Map column. NOTE: Streamlit version differences render the column as
+   data-testid="column" OR "stColumn" — cover BOTH, or these rules silently
+   match nothing (which is exactly what was leaving dead space above the map). */
+div[data-testid="column"]:has(.map-col-fill),
+div[data-testid="stColumn"]:has(.map-col-fill) {
+    background: transparent !important;
+    border: none !important;
+    overflow: visible !important;
+}
+
+/* Hide the marker hook and FULLY collapse its container so it reserves 0 height */
+.map-col-fill {
+    display: none !important;
+}
+div[data-testid="column"]:has(.map-col-fill) .element-container:has(.map-col-fill),
+div[data-testid="stColumn"]:has(.map-col-fill) .element-container:has(.map-col-fill) {
+    display: none !important;
+}
+
+/* Kill the dead space above the map so it sits right under the tab bar:
+   collapse the column's vertical gap and zero per-element + iframe margins. */
+div[data-testid="column"]:has(.map-col-fill) div[data-testid="stVerticalBlock"],
+div[data-testid="stColumn"]:has(.map-col-fill) div[data-testid="stVerticalBlock"] {
+    gap: 2px !important;
+}
+div[data-testid="column"]:has(.map-col-fill) .element-container,
+div[data-testid="column"]:has(.map-col-fill) .stMarkdown,
+div[data-testid="column"]:has(.map-col-fill) iframe,
+div[data-testid="stColumn"]:has(.map-col-fill) .element-container,
+div[data-testid="stColumn"]:has(.map-col-fill) .stMarkdown,
+div[data-testid="stColumn"]:has(.map-col-fill) iframe {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+div[data-testid="column"]:has(.map-col-fill) iframe,
+div[data-testid="stColumn"]:has(.map-col-fill) iframe {
+    display: block !important;
+}
+
+div[data-testid="column"]:has(.map-col-fill) [data-testid="stPlotlyChart"],
+div[data-testid="column"]:has(.map-col-fill) .element-container:has([data-testid="stPlotlyChart"]),
+div[data-testid="stColumn"]:has(.map-col-fill) [data-testid="stPlotlyChart"],
+div[data-testid="stColumn"]:has(.map-col-fill) .element-container:has([data-testid="stPlotlyChart"]) {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+/* ROOT CAUSE of the dead space: the tab-bar iframe (_cv1.html height=42) is
+   wrapped in a container that reserves Streamlit's DEFAULT ~150px component
+   height instead of 42px, leaving a big empty band. Clip the iframe + its
+   container to the true tab height so the map sits flush under the tabs. */
+div[data-testid="stColumn"]:has(.map-col-fill) [data-testid="element-container"]:has(iframe),
+div[data-testid="stColumn"]:has(.map-col-fill) [data-testid="stElementContainer"]:has(iframe),
+div[data-testid="column"]:has(.map-col-fill) [data-testid="element-container"]:has(iframe),
+div[data-testid="column"]:has(.map-col-fill) [data-testid="stElementContainer"]:has(iframe) {
+    height: 44px !important;
+    min-height: 44px !important;
+    max-height: 44px !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+}
+div[data-testid="stColumn"]:has(.map-col-fill) iframe,
+div[data-testid="column"]:has(.map-col-fill) iframe {
+    height: 44px !important;
+}
+
+
+/* Eliminate bottom gap after the map+panel row before Trends section */
+div[data-testid="stHorizontalBlock"]:has(.map-col-fill) {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+
+/* Reduce spacing above and below download controls for better integration */
+div[data-testid="element-container"]:has(div[data-testid="stDownloadButton"]) {
+    margin-top: -12px !important;
+    margin-bottom: -8px !important;
+}
+
+/* Energy Security Page Compactness Override */
+div[data-testid="stAppViewContainer"]:has(.energy-security-page-marker) div[data-testid="stVerticalBlock"] {
+    gap: var(--space-12) !important;
+}
+
+/* ===== RESPONSIVE – 1440p and standard laptop (1366x768) ===== */
+@media (max-width: 1440px) {
+    .kpi-card-value {
+        font-size: 34px !important;
+    }
+
+    .kpi-value {
+        font-size: 32px !important;
+    }
+
+    .kpi-card-label {
+        font-size: 11px !important;
+    }
+}
+
+@media (max-width: 1366px) {
+    .kpi-card {
+        padding: 12px !important;
+        min-height: 120px;
+        border-radius: 7px;
+    }
+
+    .kpi-card-value {
+        font-size: 28px !important;
+        letter-spacing: -0.5px;
+    }
+
+    .kpi-value {
+        font-size: 28px !important;
+        letter-spacing: -0.5px;
+    }
+
+    .kpi-card-label {
+        font-size: 11px !important;
+    }
+
+    .kpi-label {
+        font-size: 11px !important;
+    }
+
+    .kpi-card-commentary {
+        font-size: 10px;
+    }
+
+    .kpi-card-header {
+        flex-wrap: wrap;
+        gap: var(--space-4);
+    }
+
+    .status-badge {
+        font-size: 9px;
+        padding: 2px 5px;
+    }
+
+    .briefing-strip {
+        padding: 0 var(--space-8) !important;
+    }
+
+    .briefing-text {
+        font-size: 10px !important;
+    }
+
+    .briefing-value {
+        font-size: 11px !important;
+    }
+}
+
+/* ── Responsive KPI grid: 4 → 2 → 1 columns ── */
+@media (max-width: 1024px) and (min-width: 601px) {
+    [data-testid="stHorizontalBlock"]:has(.kpi-card) {
+        flex-wrap: wrap !important;
+    }
+
+    [data-testid="stHorizontalBlock"]:has(.kpi-card)>[data-testid="stColumn"] {
+        min-width: calc(50% - 8px) !important;
+        flex: 0 0 calc(50% - 8px) !important;
+    }
+}
+
+@media (max-width: 600px) {
+    [data-testid="stHorizontalBlock"]:has(.kpi-card) {
+        flex-direction: column !important;
+    }
+
+    [data-testid="stHorizontalBlock"]:has(.kpi-card)>[data-testid="stColumn"] {
+        min-width: 100% !important;
+        flex: 0 0 100% !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .kpi-card {
+        min-height: 140px;
+        padding: var(--space-16) !important;
+    }
+
+    .kpi-value {
+        font-size: 32px !important;
+    }
+}
+
+/* ============================================================
+   PREMIUM MOTION & INTERACTION SYSTEM
+   Inspired by transitions.dev — executive-grade motion.
+   Durations: 150ms fast / 220ms base / 280ms moderate.
+   All animations respect prefers-reduced-motion.
+   ============================================================ */
+
+/* ----- Motion timing foundations ----- */
+:root {
+    --ease-executive: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --ease-snap: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.6, 1);
+    --dur-fast: 150ms;
+    --dur-base: 220ms;
+    --dur-moderate: 280ms;
+}
+
+/* ----- Page entrance – subtle content reveal on load/nav ----- */
+/* ============================================================
+   PAGE TRANSITION & ENTRY ANIMATIONS
+   Spring easing: fast deceleration with slight overshoot feel
+   ============================================================ */
+
+@keyframes ph-page-enter {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+        filter: blur(2px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+@keyframes ph-slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes ph-fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* ── Main content container ── */
+.block-container,
+[data-testid="stMainBlockContainer"] {
+    animation: ph-page-enter 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── Page header ── */
+[data-testid="stMainBlockContainer"] h1,
+.page-description {
+    animation: ph-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 50ms;
+}
+
+/* ── KPI cards – stagger by column position ── */
+.kpi-card {
+    animation: ph-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+[data-testid="stHorizontalBlock"]>[data-testid="stColumn"]:nth-child(1) .kpi-card {
+    animation-delay: 70ms;
+}
+
+[data-testid="stHorizontalBlock"]>[data-testid="stColumn"]:nth-child(2) .kpi-card {
+    animation-delay: 130ms;
+}
+
+[data-testid="stHorizontalBlock"]>[data-testid="stColumn"]:nth-child(3) .kpi-card {
+    animation-delay: 190ms;
+}
+
+[data-testid="stHorizontalBlock"]>[data-testid="stColumn"]:nth-child(4) .kpi-card {
+    animation-delay: 250ms;
+}
+
+/* ── Intelligence banners & panels ── */
+.page-intel-summary,
+.intel-panel,
+.intel-banner,
+.exec-intel-banner {
+    animation: ph-slide-up 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 160ms;
+}
+
+/* ── Section headers ── */
+.section-header {
+    animation: ph-slide-up 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 100ms;
+}
+
+/* ── Charts – fade only, no translate (avoids layout shift) ── */
+[data-testid="stPlotlyChart"] {
+    animation: ph-fade-in 0.55s ease-out both;
+    animation-delay: 220ms;
+}
+
+/* ── Map header + map container ── */
+.map-header {
+    animation: ph-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 100ms;
+}
+
+/* ── Cards – region, exec, policy ── */
+.region-card,
+.exec-card,
+.policy-card {
+    animation: ph-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 180ms;
+}
+
+/* ── DataFrames / tables ── */
+[data-testid="stDataFrame"],
+[data-testid="stTable"] {
+    animation: ph-fade-in 0.5s ease-out both;
+    animation-delay: 270ms;
+}
+
+/* ── Benchmark & action panels (System Loss) ── */
+.loss-benchmark-panel,
+.exec-action-box,
+.sl-summary-panel {
+    animation: ph-slide-up 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 200ms;
+}
+
+/* ── Nav button active transition ── */
+[data-testid="stSidebar"] button {
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease !important;
+}
+
+/* ----- KPI cards – refined hover & accent-line reveal ----- */
+.kpi-card {
+    transition:
+        border-color var(--dur-fast) var(--ease-out),
+        box-shadow var(--dur-base) var(--ease-out),
+        transform var(--dur-fast) var(--ease-snap) !important;
+    will-change: transform, box-shadow;
+}
+
+.kpi-card::before {
+    transition: opacity var(--dur-fast) var(--ease-out) !important;
+}
+
+.kpi-card:hover {
+    border-color: rgba(0, 102, 255, 0.55) !important;
+    transform: translateY(-2px) !important;
+    box-shadow:
+        0 6px 20px rgba(0, 102, 255, 0.16),
+        0 0 0 1px rgba(0, 102, 255, 0.10),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+}
+
+/* KPI trend indicator – color + entrance */
+@keyframes trend-in {
+    from {
+        opacity: 0;
+        transform: translateY(3px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.kpi-trend {
+    animation: trend-in var(--dur-base) var(--ease-out) both;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.kpi-trend.positive {
+    color: var(--success);
+}
+
+.kpi-trend.negative {
+    color: var(--danger);
+}
+
+.kpi-card-context {
+    color: var(--text-muted);
+    font-size: 10px;
+}
+
+/* Status badge micro-transition */
+.status-badge {
+    transition:
+        background var(--dur-fast) var(--ease-out),
+        color var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out) !important;
+}
+
+/* ----- Briefing strip value fade on data change ----- */
+.briefing-value {
+    transition: color var(--dur-base) var(--ease-out);
+}
+
+/* ----- Risk pulse animations – purposeful, not decorative ----- */
+@keyframes ph-risk-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 4px currentColor;
+        opacity: 1;
+    }
+
+    50% {
+        box-shadow: 0 0 10px currentColor;
+        opacity: 0.80;
+    }
+}
+
+@keyframes ph-alert-pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.72;
+    }
+}
+
+/* Only pulse the highest-severity indicators */
+.hotspot-status.high::before {
+    animation: ph-risk-pulse 2.6s ease-in-out infinite;
+}
+
+.readiness-status.status-danger {
+    animation: ph-alert-pulse 2.2s ease-in-out infinite;
+}
+
+/* ----- Intelligence panel items ----- */
+.finding-item,
+.hotspot-item {
+    transition:
+        background var(--dur-fast) var(--ease-out),
+        transform var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out) !important;
+}
+
+.readiness-card {
+    transition:
+        background var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out),
+        transform var(--dur-fast) var(--ease-out);
+}
+
+.readiness-card:hover {
+    background: rgba(0, 102, 255, 0.055);
+    border-color: rgba(0, 102, 255, 0.28);
+    transform: translateX(2px);
+    cursor: default;
+}
+
+/* ----- Fuel mix cells ----- */
+.fuel-mix-item {
+    transition:
+        background var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out);
+}
+
+.fuel-mix-item:hover {
+    background: rgba(0, 102, 255, 0.07);
+    border-color: rgba(0, 102, 255, 0.22);
+}
+
+/* ----- Transition tracker cells ----- */
+.transition-item {
+    transition:
+        background var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out);
+}
+
+.transition-item:hover {
+    background: rgba(255, 255, 255, 0.024);
+    border-color: rgba(0, 102, 255, 0.18);
+}
+
+/* ----- Policy cards – elevation hover ----- */
+.policy-card {
+    transition:
+        transform var(--dur-base) var(--ease-snap),
+        box-shadow var(--dur-base) var(--ease-snap) !important;
+}
+
+.policy-card:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.58) !important;
+}
+
+/* ----- Regional cards – refine existing hover ----- */
+.region-card {
+    transition:
+        transform var(--dur-base) var(--ease-snap),
+        box-shadow var(--dur-base) var(--ease-snap) !important;
+}
+
+.risk-badge {
+    transition:
+        background var(--dur-fast) var(--ease-out),
+        color var(--dur-fast) var(--ease-out);
+}
+
+/* ----- Navigation – sharper active/hover transitions ----- */
+[data-testid="stSidebar"] button {
+    transition:
+        background var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out),
+        color var(--dur-fast) var(--ease-out),
+        transform var(--dur-fast) var(--ease-out),
+        box-shadow var(--dur-fast) var(--ease-out) !important;
+}
+
+
+/* ----- Export / action buttons ----- */
+[data-testid="stDownloadButton"] button {
+    transition:
+        background var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out),
+        box-shadow var(--dur-fast) var(--ease-out),
+        transform var(--dur-fast) var(--ease-out) !important;
+}
+
+[data-testid="stDownloadButton"] button:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 14px rgba(0, 102, 255, 0.24) !important;
+    border-color: rgba(0, 102, 255, 0.6) !important;
+}
+
+/* ----- Expander smooth open/close ----- */
+[data-testid="stExpander"] {
+    transition: border-color var(--dur-base) var(--ease-out);
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-panel) !important;
+}
+
+[data-testid="stExpander"] summary {
+    transition:
+        background var(--dur-fast) var(--ease-out),
+        color var(--dur-fast) var(--ease-out);
+}
+
+[data-testid="stExpander"] summary:hover {
+    background: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* ----- Plotly tooltip – dark executive style ----- */
+.js-plotly-plot .plotly .hovertext rect {
+    fill: rgba(7, 13, 25, 0.96) !important;
+    stroke: rgba(0, 102, 255, 0.35) !important;
+    stroke-width: 1px !important;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.55)) !important;
+}
+
+.js-plotly-plot .plotly .hovertext text {
+    fill: #F8FAFC !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 12px !important;
+}
+
+/* ----- Loading spinner – premium state ----- */
+[data-testid="stSpinner"]>div {
+    border-color: rgba(0, 102, 255, 0.18) !important;
+    border-top-color: var(--accent) !important;
+    width: 22px !important;
+    height: 22px !important;
+}
+
+/* ----- Skeleton shimmer – reusable utility class ----- */
+@keyframes ph-skeleton {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.ph-skeleton {
+    background: linear-gradient(90deg,
+            rgba(30, 43, 71, 0.32) 25%,
+            rgba(0, 102, 255, 0.07) 50%,
+            rgba(30, 43, 71, 0.32) 75%);
+    background-size: 200% 100%;
+    animation: ph-skeleton 1.6s ease-in-out infinite;
+    border-radius: var(--radius-control);
+}
+
+/* ----- Accessibility: honour reduced-motion preference ----- */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ============================================================
+   V2 COMPONENT LIBRARY – Energy Security Score Cards
+   ============================================================ */
+
+.security-score-card {
+    background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(14, 23, 44, 0.95) 100%);
+    border: 1px solid var(--border-subtle);
+    border-top: 3px solid var(--border-subtle);
+    border-radius: var(--radius-panel);
+    padding: var(--space-20) var(--space-16);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 200px;
+    transition: transform var(--dur-base) var(--ease-snap), box-shadow var(--dur-base) var(--ease-snap);
+}
+
+.security-score-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+}
+
+.ssc-grid-name {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: var(--space-8);
+}
+
+.ssc-score {
+    font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
+    font-size: 72px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -3px;
+    margin-bottom: var(--space-4);
+}
+
+.ssc-label {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: var(--space-12);
+}
+
+.ssc-divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border-subtle);
+    margin-bottom: var(--space-12);
+}
+
+.ssc-pillars {
+    display: flex;
+    gap: var(--space-16);
+    width: 100%;
+    justify-content: center;
+}
+
+.ssc-pillar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+
+.ssc-pillar-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+}
+
+.ssc-pillar-val {
+    font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+/* Demand Pressure classification chip — replaces a raw 0–100 score with an
+   executive-readable label (LOW PRESSURE / BALANCED / WATCH / ELEVATED). */
+.ssc-pillar-chip {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    padding: 3px 7px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    margin-top: 3px;
+}
+
+/* The Demand Growth pillar carries a tooltip — hint it's interactive. */
+.ssc-pillar[title] {
+    cursor: help;
+}
+
+/* Model-scope caveat under the score-cards header — keeps the framework honest
+   about what the composite score can and cannot see (e.g. reserve margin / brownouts). */
+.es-model-note {
+    font-size: 11.5px;
+    line-height: 1.55;
+    color: var(--text-muted);
+    background: rgba(245, 158, 11, 0.06);
+    border: 1px solid rgba(245, 158, 11, 0.22);
+    border-left: 3px solid #F59E0B;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin: 2px 0 14px 0;
+}
+.es-model-note b { color: var(--text-secondary); font-weight: 700; }
+
+/* ============================================================
+   V2 COMPONENT LIBRARY – Loss Intelligence Panel
+   ============================================================ */
+
+.loss-intel-panel {
+    background: linear-gradient(135deg, rgba(14, 23, 44, 0.98) 0%, rgba(7, 13, 25, 0.98) 100%);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid var(--danger);
+    border-radius: var(--radius-panel);
+    padding: var(--space-16);
+    margin-bottom: var(--space-12);
+}
+
+.loss-intel-header {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-12);
+    padding-left: var(--space-8);
+    border-left: 3px solid var(--danger);
+}
+
+.loss-intel-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--space-8);
+    margin-bottom: var(--space-12);
+}
+
+.loss-intel-metric {
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(30, 43, 71, 0.4);
+    border-radius: var(--radius-control);
+    padding: var(--space-8) var(--space-10);
+}
+
+.lim-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.lim-value {
+    font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+.lim-sub {
+    font-size: 9px;
+    color: var(--text-secondary);
+    margin-top: 3px;
+}
+
+.loss-alerts {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.loss-alert {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    padding: var(--space-8) var(--space-12);
+    border-radius: var(--radius-control);
+    border: 1px solid;
+}
+
+.loss-alert.alert-critical {
+    background: rgba(230, 57, 70, 0.07);
+    border-color: rgba(230, 57, 70, 0.25);
+}
+
+.loss-alert.alert-warning {
+    background: rgba(255, 214, 10, 0.05);
+    border-color: rgba(255, 214, 10, 0.2);
+}
+
+.loss-alert.alert-normal {
+    background: rgba(45, 198, 83, 0.06);
+    border-color: rgba(45, 198, 83, 0.2);
+}
+
+.loss-alert-badge {
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 1.2px;
+    padding: 2px 7px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+
+.alert-critical .loss-alert-badge {
+    background: rgba(230, 57, 70, 0.2);
+    color: var(--danger);
+}
+
+.alert-warning .loss-alert-badge {
+    background: rgba(255, 214, 10, 0.15);
+    color: var(--warning);
+}
+
+.alert-normal .loss-alert-badge {
+    background: rgba(45, 198, 83, 0.15);
+    color: var(--success);
+}
+
+.loss-alert-text {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.alert-critical .loss-alert-text {
+    color: var(--text-primary);
+}
+
+/* ============================================================
+   V2 COMPONENT LIBRARY – Generation Intelligence Panel
+   ============================================================ */
+
+.gen-intel-panel {
+    background: linear-gradient(135deg, rgba(14, 23, 44, 0.98) 0%, rgba(7, 13, 25, 0.98) 100%);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-panel);
+    padding: var(--space-12) var(--space-16);
+    margin-bottom: var(--space-12);
+}
+
+.gen-intel-header {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-10);
+    padding-left: var(--space-8);
+    border-left: 3px solid var(--accent);
+}
+
+.gen-intel-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--space-8);
+}
+
+@media (max-width: 1200px) {
+    .gen-intel-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.gen-intel-metric {
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(30, 43, 71, 0.35);
+    border-radius: var(--radius-control);
+    padding: var(--space-8) var(--space-10);
+}
+
+.gim-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+}
+
+.gim-value {
+    font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--text-primary);
+}
+
+.gim-sub {
+    font-size: 10px;
+    color: var(--text-secondary);
+    margin-top: 3px;
+}
+
+/* ============================================================
+   V2 COMPONENT LIBRARY – Regional Intelligence Panel
+   ============================================================ */
+
+.regional-intel-panel {
+    background: linear-gradient(135deg, rgba(14, 23, 44, 0.98) 0%, rgba(7, 13, 25, 0.98) 100%);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid #00b4d8;
+    border-radius: var(--radius-panel);
+    padding: var(--space-16);
+    margin-bottom: var(--space-12);
+}
+
+.rip-header {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-12);
+    padding-left: var(--space-8);
+    border-left: 3px solid #00b4d8;
+}
+
+.rip-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--space-8);
+}
+
+.rip-item {
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(30, 43, 71, 0.35);
+    border-radius: var(--radius-control);
+    padding: var(--space-8) var(--space-10);
+}
+
+.rip-item-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.rip-item-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+    margin-bottom: 2px;
+}
+
+.rip-item-metric {
+    font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+/* ============================================================
+   V2 COMPONENT LIBRARY – Policy Priority Matrix
+   ============================================================ */
+
+.policy-matrix-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-8);
+    margin-top: var(--space-8);
+}
+
+.matrix-cell {
+    background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(14, 23, 44, 0.95) 100%);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-panel);
+    padding: var(--space-16);
+    min-height: 150px;
+    position: relative;
+    transition: transform var(--dur-base) var(--ease-snap);
+}
+
+.matrix-cell:hover {
+    transform: translateY(-2px);
+}
+
+.matrix-cell.qw {
+    border-top: 3px solid var(--success);
+}
+
+.matrix-cell.str {
+    border-top: 3px solid #60A5FA;
+}
+
+.matrix-cell.fi {
+    border-top: 3px solid var(--warning);
+}
+
+.matrix-cell.dep {
+    border-top: 3px solid #64748B;
+}
+
+.matrix-cell-hd {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-10);
+    gap: var(--space-8);
+}
+
+.matrix-quad-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-muted);
+    line-height: 1.3;
+}
+
+.matrix-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.matrix-tag.qw {
+    background: rgba(45, 198, 83, 0.15);
+    color: var(--success);
+    border: 1px solid rgba(45, 198, 83, 0.3);
+}
+
+.matrix-tag.str {
+    background: rgba(0, 102, 255, 0.15);
+    color: #60A5FA;
+    border: 1px solid rgba(0, 102, 255, 0.3);
+}
+
+.matrix-tag.fi {
+    background: rgba(255, 214, 10, 0.12);
+    color: var(--warning);
+    border: 1px solid rgba(255, 214, 10, 0.25);
+}
+
+.matrix-tag.dep {
+    background: rgba(100, 116, 139, 0.15);
+    color: #94A3B8;
+    border: 1px solid rgba(100, 116, 139, 0.25);
+}
+
+.matrix-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.matrix-items li {
+    font-size: 12px;
+    color: var(--text-secondary);
+    padding-left: var(--space-12);
+    position: relative;
+    line-height: 1.4;
+}
+
+.matrix-items li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--text-muted);
+    font-size: 10px;
+    line-height: 1.4;
+}
+
+/* ============================================================
+   V2 COMPONENT LIBRARY – National Energy Outlook
+   ============================================================ */
+
+.outlook-panel {
+    background: linear-gradient(135deg, rgba(14, 23, 44, 0.98) 0%, rgba(7, 13, 25, 0.98) 100%);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-panel);
+    padding: var(--space-16);
+}
+
+.outlook-header {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-12);
+    padding-left: var(--space-8);
+    border-left: 3px solid var(--accent);
+}
+
+.outlook-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-10);
+}
+
+.outlook-metric {
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(30, 43, 71, 0.35);
+    border-radius: var(--radius-control);
+    padding: var(--space-12);
+    text-align: center;
+}
+
+.outlook-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-muted);
+    margin-bottom: var(--space-4);
+    line-height: 1.3;
+}
+
+.outlook-value {
+    font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+    line-height: 1;
+}
+
+.outlook-sub {
+    font-size: 9px;
+    color: var(--text-secondary);
+}
+
+/* ============================================================
+   V2 COMPONENT LIBRARY – Enhanced Policy Roadmap
+   ============================================================ */
+
+.roadmap-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: var(--space-8);
+    font-size: 12px;
+}
+
+.roadmap-table th {
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    padding: var(--space-8) var(--space-10);
+    border-bottom: 1px solid var(--border-subtle);
+    text-align: left;
+    background: rgba(14, 23, 44, 0.6);
+}
+
+.roadmap-table td {
+    padding: var(--space-8) var(--space-10);
+    border-bottom: 1px solid rgba(30, 43, 71, 0.25);
+    color: var(--text-secondary);
+    vertical-align: middle;
+}
+
+.roadmap-table tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.roadmap-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.badge-critical {
+    background: rgba(230, 57, 70, 0.18);
+    color: var(--danger);
+    border: 1px solid rgba(230, 57, 70, 0.3);
+}
+
+.badge-high {
+    background: rgba(255, 214, 10, 0.14);
+    color: var(--warning);
+    border: 1px solid rgba(255, 214, 10, 0.25);
+}
+
+.badge-medium {
+    background: rgba(0, 180, 216, 0.12);
+    color: var(--accent);
+    border: 1px solid rgba(0, 180, 216, 0.25);
+}
+
+.badge-low {
+    background: rgba(100, 116, 139, 0.15);
+    color: #94A3B8;
+    border: 1px solid rgba(100, 116, 139, 0.25);
+}
+
+.badge-in-progress {
+    background: rgba(0, 180, 216, 0.12);
+    color: var(--accent);
+    border: 1px solid rgba(0, 180, 216, 0.3);
+}
+
+.badge-planning {
+    background: rgba(255, 214, 10, 0.12);
+    color: var(--warning);
+    border: 1px solid rgba(255, 214, 10, 0.25);
+}
+
+.badge-review {
+    background: rgba(45, 198, 83, 0.12);
+    color: var(--success);
+    border: 1px solid rgba(45, 198, 83, 0.25);
+}
+
+.badge-pending {
+    background: rgba(100, 116, 139, 0.14);
+    color: #94A3B8;
+    border: 1px solid rgba(100, 116, 139, 0.25);
+}
+
+.badge-approved {
+    background: rgba(45, 198, 83, 0.18);
+    color: var(--success);
+    border: 1px solid rgba(45, 198, 83, 0.35);
+}
+
+.progress-bar-wrap {
+    background: rgba(30, 43, 71, 0.5);
+    border-radius: 2px;
+    height: 4px;
+    width: 80px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--success));
+    transition: width var(--dur-moderate) var(--ease-out);
+}
+
+/* ============================================================
+   V2 – KPI icon wrapper
+   ============================================================ */
+
+.kpi-icon-wrap {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 4px;
+    vertical-align: middle;
+    opacity: 0.75;
+}
+
+/* ============================================================
+   V2 – Fuel Mix Ranking Chart (Generation page)
+   ============================================================ */
+
+.fuel-rank-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    padding: var(--space-4) 0;
+}
+
+.fuel-rank-row {
+    display: grid;
+    grid-template-columns: 130px 1fr 44px;
+    align-items: center;
+    gap: var(--space-8);
+}
+
+.fuel-rank-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fuel-rank-track {
+    background: rgba(30, 43, 71, 0.45);
+    border-radius: 3px;
+    height: 7px;
+    overflow: hidden;
+    position: relative;
+}
+
+.fuel-rank-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width var(--dur-moderate) var(--ease-out);
+    opacity: 0.9;
+}
+
+.fuel-rank-pct {
+    font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-align: right;
+}
+
+/* ============================================================
+   V2 – Policy matrix quadrant background tints
+   ============================================================ */
+
+.matrix-cell.qw {
+    background: linear-gradient(160deg, rgba(45, 198, 83, 0.06) 0%, rgba(14, 23, 44, 0.97) 100%);
+}
+
+.matrix-cell.str {
+    background: linear-gradient(160deg, rgba(0, 102, 255, 0.07) 0%, rgba(14, 23, 44, 0.97) 100%);
+}
+
+.matrix-cell.fi {
+    background: linear-gradient(160deg, rgba(255, 214, 10, 0.06) 0%, rgba(14, 23, 44, 0.97) 100%);
+}
+
+.matrix-cell.dep {
+    background: linear-gradient(160deg, rgba(100, 116, 139, 0.06) 0%, rgba(14, 23, 44, 0.97) 100%);
+}
+
+/* ============================================================
+   V2 – RIP item label flex alignment for icons
+   ============================================================ */
+
+.rip-item-label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ============================================================
+   V3 DESIGN SYSTEM – Energy Security Card: status badge + intel rows
+   ============================================================ */
+
+/* Taller cards to accommodate intel content */
+.security-score-card {
+    min-height: 380px !important;
+    justify-content: flex-start !important;
+}
+
+.ssc-status-badge {
+    display: inline-block;
+    padding: 3px 14px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    border: 1px solid transparent;
+    margin: 4px 0 var(--space-12) 0;
+}
+
+.ssc-intel {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: var(--space-10);
+    text-align: left;
+}
+
+.ssc-intel-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: rgba(255, 255, 255, 0.018);
+    border: 1px solid rgba(30, 43, 71, 0.3);
+    border-radius: 3px;
+    padding: 5px 8px;
+}
+
+.ssc-intel-label {
+    font-size: 8px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    color: var(--text-muted);
+}
+
+.ssc-intel-value {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.35;
+}
+
+.ssc-scenario {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin: 4px 0 2px 0;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 6px;
+    width: 100%;
+    text-align: center;
+}
+
+/* ============================================================
+   V3 DESIGN SYSTEM – Security Radar Intelligence Column
+   ============================================================ */
+
+.sec-radar-intel {
+    background: linear-gradient(180deg, #07101e 0%, #050913 100%);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-panel);
+    padding: var(--space-16);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+}
+
+.sec-radar-intel-title {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-secondary);
+    padding-left: var(--space-8);
+    border-left: 3px solid var(--accent);
+    margin-bottom: var(--space-4);
+}
+
+.sec-pillar-row {
+    background: rgba(255, 255, 255, 0.018);
+    border: 1px solid rgba(30, 43, 71, 0.3);
+    border-radius: var(--radius-control);
+    padding: var(--space-10) var(--space-12);
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    transition: background var(--dur-fast) var(--ease-out);
+}
+
+.sec-pillar-row:hover {
+    background: rgba(0, 102, 255, 0.05);
+}
+
+.sec-pillar-row-label {
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+}
+
+.sec-pillar-row-status {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.sec-pillar-row-note {
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.35;
+}
+
+.sec-priority-row {
+    background: rgba(0, 102, 255, 0.06);
+    border: 1px solid rgba(0, 102, 255, 0.2);
+    border-radius: var(--radius-control);
+    padding: var(--space-10) var(--space-12);
+    margin-top: auto;
+}
+
+.sec-priority-label {
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+}
+
+.sec-priority-value {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+/* ============================================================
+   V3 DESIGN SYSTEM – Page Intelligence Summary Bar
+   ============================================================ */
+
+.page-intel-summary {
+    background: linear-gradient(90deg, var(--bg-surface-secondary) 0%, rgba(14, 23, 44, 0.4) 100%);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-control);
+    padding: var(--space-8) var(--space-12);
+    margin-top: 12px;
+    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: auto 1fr 1fr 1fr;
+    gap: var(--space-12);
+    align-items: start;
+}
+
+.pis-tag {
+    background: rgba(0, 102, 255, 0.16);
+    color: var(--accent);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    padding: 2px 7px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    align-self: center;
+    white-space: nowrap;
+}
+
+.pis-block {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.pis-block-label {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.pis-block-text {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.4;
+}
+
+/* ============================================================
+   V3 DESIGN SYSTEM – Premium Loading Screen
+   ============================================================ */
+
+@keyframes ph-loading-exit {
+    from {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(0.97);
+        filter: blur(3px);
+    }
+}
+
+.ph-loading-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    gap: var(--space-12);
+    text-align: center;
+    animation: ph-page-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.ph-loading-screen.ph-loading-exit {
+    animation: ph-loading-exit 0.35s cubic-bezier(0.4, 0, 1, 1) both;
+    pointer-events: none;
+}
+
+.ph-loading-brand {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: 5px;
+    color: var(--text-primary);
+    text-transform: uppercase;
+}
+
+.ph-loading-subtitle {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-top: -6px;
+}
+
+.ph-loading-credit {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-top: 10px;
+    opacity: 0.35;
+    transition: opacity 0.2s;
+}
+
+.ph-loading-credit:hover {
+    opacity: 0.7;
+}
+
+.ph-loading-status {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-top: var(--space-8);
+}
+
+@keyframes ph-load-shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(250%);
+    }
+}
+
+.ph-loading-bar {
+    width: 280px;
+    height: 2px;
+    background: rgba(0, 102, 255, 0.12);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: var(--space-4);
+    position: relative;
+}
+
+.ph-loading-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 40%;
+    background: linear-gradient(90deg, transparent, var(--accent), rgba(0, 102, 255, 0.6), transparent);
+    animation: ph-load-shimmer 1.6s ease-in-out infinite;
+    border-radius: 2px;
+}
+
+/* ============================================================
+   V3 DESIGN SYSTEM – Demand Intel Summary override on mobile
+   ============================================================ */
+
+@media (max-width: 900px) {
+    .page-intel-summary {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-12);
+    }
+
+    .pis-tag {
+        grid-column: span 2;
+        justify-self: start;
+    }
+}
+
+/* ============================================================
+   V3.5 DESIGN SYSTEM – Sidebar Footer
+   ============================================================ */
+
+.sidebar-footer {
+    padding: 4px 0 2px 0;
+}
+
+.sf-version {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+.sf-github {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    margin-top: 4px;
+    transition: opacity 0.15s;
+}
+
+.sf-github:hover {
+    opacity: 0.8;
+    text-decoration: none;
+}
+
+.sf-author {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1.4;
+}
+
+.sf-github-url {
+    display: block;
+    font-size: 9px;
+    color: var(--text-muted);
+    line-height: 1.3;
+    margin-top: 1px;
+}
+
+.sf-tagline {
+    font-size: 9px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    margin-bottom: var(--space-8);
+    line-height: 1.3;
+    letter-spacing: 0.2px;
+}
+
+.sf-divider {
+    height: 1px;
+    background: var(--border-subtle);
+    margin: var(--space-6) 0;
+}
+
+.sf-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 4px;
+    margin-top: 1px;
+}
+
+.sf-key {
+    font-size: 7px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--text-muted);
+    line-height: 1.4;
+    white-space: nowrap;
+    flex-shrink: 0;
+    opacity: 0.7;
+}
+
+.sf-val {
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--text-muted);
+    line-height: 1.4;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sf-val.accent {
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+/* ============================================================
+   V3.5 DESIGN SYSTEM – Policy Scenario Lab Sidebar
+   ============================================================ */
+
+.scenario-lab-header {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-secondary);
+    padding: var(--space-4) 0 var(--space-6) 0;
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: var(--space-6);
+}
+
+.scenario-active-info {
+    font-size: 10px;
+    color: var(--text-secondary);
+    padding: var(--space-6) var(--space-8);
+    background: rgba(0, 102, 255, 0.07);
+    border-left: 2px solid var(--accent);
+    border-radius: 0 var(--radius-control) var(--radius-control) 0;
+    margin-top: var(--space-4);
+    line-height: 1.5;
+}
+
+/* ============================================================
+   V3.5 DESIGN SYSTEM – 768px h1 responsive
+   ============================================================ */
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 28px !important;
+    }
+
+    .section-header {
+        font-size: 18px !important;
+    }
+}
+
+/* ============================================================
+   V3.6.2 — System Loss single-grid panels
+   ============================================================ */
+
+.loss-benchmark-panel {
+    background: linear-gradient(135deg, rgba(14, 23, 44, 0.95) 0%, rgba(7, 13, 25, 0.95) 100%);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid #10B981;
+    border-radius: var(--radius-panel);
+    padding: var(--space-12) var(--space-16);
+    margin-bottom: var(--space-10);
+}
+
+.lbp-header {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-10);
+    padding-left: var(--space-8);
+    border-left: 2px solid #10B981;
+}
+
+.lbp-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-8);
+}
+
+.lbp-item {
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(30, 43, 71, 0.4);
+    border-radius: var(--radius-control);
+    padding: var(--space-8) var(--space-10);
+}
+
+.lbp-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.lbp-value {
+    font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+/* Executive action box */
+.exec-action-box {
+    background: linear-gradient(135deg, rgba(14, 23, 44, 0.95) 0%, rgba(7, 13, 25, 0.95) 100%);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-panel);
+    padding: var(--space-12) var(--space-16);
+    margin-bottom: var(--space-12);
+}
+
+.eab-header {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-10);
+    padding-left: var(--space-8);
+    border-left: 2px solid var(--accent);
+}
+
+.eab-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-8);
+    margin-bottom: var(--space-10);
+}
+
+.eab-item {
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(30, 43, 71, 0.4);
+    border-radius: var(--radius-control);
+    padding: var(--space-6) var(--space-10);
+}
+
+.eab-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+}
+
+.eab-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.eab-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: var(--space-8);
+}
+
+.eab-action {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* System Loss page summary panel */
+.sl-summary-panel {
+    background: linear-gradient(135deg, rgba(14, 23, 44, 0.98) 0%, rgba(7, 13, 25, 0.98) 100%);
+    border: 1px solid var(--border-subtle);
+    border-top: 2px solid var(--accent);
+    border-radius: var(--radius-panel);
+    padding: var(--space-16);
+    margin-top: var(--space-16);
+}
+
+.slsp-header {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-12);
+}
+
+.slsp-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--space-8);
+}
+
+.slsp-item {
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(30, 43, 71, 0.4);
+    border-radius: var(--radius-control);
+    padding: var(--space-8) var(--space-10);
+}
+
+.slsp-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.slsp-value {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+/* ============================================================
+   V3.6.3 — Intelligence banner responsive + spacing rules
+   ============================================================ */
+
+/* Ensure intel banner never overlaps KPI row */
+.page-intel-summary+* {
+    margin-top: 0;
+}
+
+/* Tablet: 2-col KPI */
+@media (max-width: 900px) {
+    .page-intel-summary {
+        grid-template-columns: auto 1fr 1fr;
+    }
+}
+
+/* Mobile: stack intel banner vertically */
+@media (max-width: 600px) {
+    .page-intel-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .kpi-card {
+        min-height: 100px !important;
+    }
+
+    .kpi-value {
+        font-size: 24px !important;
+    }
+}
+
+/* ============================================================
+   POLICY SCENARIO LAB – 2-column in-page panel
+   Left: label/title  |  Right: 5 scenario buttons
+   Active strip connects flush below
+   ============================================================ */
+
+/* Hidden markers */
+.slp-outer-marker,
+.slp-btn-marker {
+    display: none;
+}
+
+/* Outer panel row — wraps [label | buttons] */
+div[data-testid="stHorizontalBlock"]:has(.slp-outer-marker) {
+    background: rgba(10, 18, 35, 0.7);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-panel) var(--radius-panel) 0 0;
+    padding: 10px 14px !important;
+    margin-bottom: 0 !important;
+    align-items: center !important;
+    animation: ph-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 60ms;
+}
+
+/* Label column — title + subtitle */
+.slp-label-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-right: 14px;
+    border-right: 1px solid var(--border-subtle);
+    min-height: 42px;
+}
+
+.slp-title {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+
+.slp-subtitle {
+    font-size: 9px;
+    color: var(--text-muted);
+    margin-top: 3px;
+    letter-spacing: 0.2px;
+    line-height: 1.4;
+}
+
+/* Collapse the hidden-marker wrapper so Baseline button stays level with siblings */
+div[data-testid="stHorizontalBlock"]:has(.slp-btn-marker):not(:has(.slp-outer-marker)) [data-testid="stMarkdownContainer"]:has(.slp-btn-marker) {
+    display: none !important;
+}
+
+/* Inner 5-button row — sits inside the outer panel's right column */
+div[data-testid="stHorizontalBlock"]:has(.slp-btn-marker):not(:has(.slp-outer-marker)) {
+    gap: 5px !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+div[data-testid="stHorizontalBlock"]:has(.slp-btn-marker) .stButton button {
+    height: 30px !important;
+    min-height: 30px !important;
+    padding: 0 10px !important;
+    font-size: 9px !important;
+    font-weight: 800 !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+    border-radius: 4px !important;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease !important;
+}
+
+div[data-testid="stHorizontalBlock"]:has(.slp-btn-marker) .stButton button[kind="secondary"] {
+    background: rgba(10, 18, 35, 0.5) !important;
+    border-color: rgba(30, 43, 71, 0.9) !important;
+    color: rgba(142, 159, 175, 0.6) !important;
+}
+
+div[data-testid="stHorizontalBlock"]:has(.slp-btn-marker) .stButton button[kind="secondary"]:hover {
+    background: rgba(96, 165, 250, 0.07) !important;
+    border-color: rgba(96, 165, 250, 0.3) !important;
+    color: var(--text-secondary) !important;
+}
+
+div[data-testid="stHorizontalBlock"]:has(.slp-btn-marker) .stButton button[kind="primary"] {
+    background: rgba(0, 102, 255, 0.15) !important;
+    border: 1px solid rgba(96, 165, 250, 0.45) !important;
+    color: #60A5FA !important;
+}
+
+.slp-active-strip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    background: rgba(0, 102, 255, 0.05);
+    border: 1px solid rgba(96, 165, 250, 0.15);
+    border-radius: var(--radius-panel);
+    padding: 7px 14px;
+    font-size: 10px;
+    color: var(--text-muted);
+    animation: ph-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 140ms;
+}
+
+.slp-active-name {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: #60A5FA;
+}
+
+.slp-active-desc {
+    color: var(--text-secondary);
+}
+
+.slp-sep {
+    color: var(--border-subtle);
+    opacity: 0.6;
+}
+
+.slp-pos {
+    color: #10B981;
+    font-weight: 700;
+}
+
+.slp-neg {
+    color: #e63946;
+    font-weight: 700;
+}
+
+/* ============================================================
+   ENERGY SECURITY – in-page scenario analysis panel
+   ============================================================ */
+
+.es-scenario-panel {
+    background: rgba(10, 18, 35, 0.65);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-panel) var(--radius-panel) 0 0;
+    padding: 8px 14px 6px;
+    margin-bottom: 0;
+    animation: ph-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 80ms;
+}
+
+.es-scenario-title {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+
+.es-scenario-sub {
+    font-size: 9px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    letter-spacing: 0.2px;
+}
+
+/* Hidden marker */
+.es-slider-marker {
+    display: none;
+}
+
+/* Slider row sits flush below the panel header */
+[data-testid="stMarkdownContainer"]:has(.es-scenario-panel) {
+    margin-bottom: -4px !important;
+}
+
+/* Slider columns row — panel continuation */
+div[data-testid="stHorizontalBlock"]:has(.es-slider-marker) {
+    background: rgba(10, 18, 35, 0.45);
+    border: 1px solid var(--border-subtle);
+    border-top: none;
+    border-radius: 0 0 var(--radius-panel) var(--radius-panel);
+    padding: 4px 14px 10px !important;
+    animation: ph-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 110ms;
+}
+
+/* ============================================================
+   COMPREHENSIVE ENTRY ANIMATIONS – all views
+   ============================================================ */
+
+/* Policy Insights */
+.outlook-panel {
+    animation: ph-slide-up 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 220ms;
+}
+
+.policy-matrix-wrapper {
+    animation: ph-slide-up 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 200ms;
+}
+
+.roadmap-table {
+    animation: ph-fade-in 0.5s ease-out both;
+    animation-delay: 260ms;
+}
+
+/* Executive */
+.briefing-strip,
+.executive-summary-banner {
+    animation: ph-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 140ms;
+}
+
+.fuel-mix-grid,
+.fuel-rank-chart {
+    animation: ph-fade-in 0.5s ease-out both;
+    animation-delay: 230ms;
+}
+
+/* Energy Security */
+.security-score-card,
+.readiness-card,
+.readiness-grid {
+    animation: ph-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 180ms;
+}
+
+.sec-radar-intel,
+.ssc-intel,
+.ssc-pillars {
+    animation: ph-slide-up 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 200ms;
+}
+
+/* Generation */
+.finding-item,
+.hotspot-item {
+    animation: ph-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 200ms;
+}
+
+/* Regional */
+.transition-grid,
+.transition-item,
+.pis-block {
+    animation: ph-fade-in 0.45s ease-out both;
+    animation-delay: 230ms;
+}
+
+/* ============================================================
+   EQUAL-HEIGHT CARD ROWS
+   Forces all cards in a horizontal block to stretch to the
+   height of the tallest card — accounts for sidebar width
+   reducing column space and causing uneven text wrapping.
+   ============================================================ */
+
+/* 1. Stretch the horizontal block itself */
+[data-testid="stHorizontalBlock"]:has(.kpi-card),
+[data-testid="stHorizontalBlock"]:has(.policy-card),
+[data-testid="stHorizontalBlock"]:has(.region-card),
+[data-testid="stHorizontalBlock"]:has(.exec-card),
+[data-testid="stHorizontalBlock"]:has(.readiness-card),
+[data-testid="stHorizontalBlock"]:has(.security-score-card) {
+    align-items: stretch !important;
+}
+
+/* 2. Make each column a flex column */
+[data-testid="stHorizontalBlock"]:has(.kpi-card)>[data-testid="stColumn"],
+[data-testid="stHorizontalBlock"]:has(.policy-card)>[data-testid="stColumn"],
+[data-testid="stHorizontalBlock"]:has(.region-card)>[data-testid="stColumn"],
+[data-testid="stHorizontalBlock"]:has(.exec-card)>[data-testid="stColumn"],
+[data-testid="stHorizontalBlock"]:has(.readiness-card)>[data-testid="stColumn"],
+[data-testid="stHorizontalBlock"]:has(.security-score-card)>[data-testid="stColumn"] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-self: stretch !important;
+}
+
+/* 3. Stretch all intermediate wrappers — covers stVerticalBlock, stElementContainer, etc. */
+[data-testid="stHorizontalBlock"]:has(.kpi-card)>[data-testid="stColumn"]>*,
+[data-testid="stHorizontalBlock"]:has(.policy-card)>[data-testid="stColumn"]>*,
+[data-testid="stHorizontalBlock"]:has(.region-card)>[data-testid="stColumn"]>*,
+[data-testid="stHorizontalBlock"]:has(.exec-card)>[data-testid="stColumn"]>*,
+[data-testid="stHorizontalBlock"]:has(.readiness-card)>[data-testid="stColumn"]>*,
+[data-testid="stHorizontalBlock"]:has(.security-score-card)>[data-testid="stColumn"]>* {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+[data-testid="stHorizontalBlock"]:has(.kpi-card)>[data-testid="stColumn"]>*>*,
+[data-testid="stHorizontalBlock"]:has(.policy-card)>[data-testid="stColumn"]>*>*,
+[data-testid="stHorizontalBlock"]:has(.region-card)>[data-testid="stColumn"]>*>*,
+[data-testid="stHorizontalBlock"]:has(.exec-card)>[data-testid="stColumn"]>*>*,
+[data-testid="stHorizontalBlock"]:has(.readiness-card)>[data-testid="stColumn"]>*>*,
+[data-testid="stHorizontalBlock"]:has(.security-score-card)>[data-testid="stColumn"]>*>* {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* 4. Stretch the markdown container */
+[data-testid="stHorizontalBlock"]:has(.kpi-card) [data-testid="stMarkdownContainer"],
+[data-testid="stHorizontalBlock"]:has(.policy-card) [data-testid="stMarkdownContainer"],
+[data-testid="stHorizontalBlock"]:has(.region-card) [data-testid="stMarkdownContainer"],
+[data-testid="stHorizontalBlock"]:has(.exec-card) [data-testid="stMarkdownContainer"],
+[data-testid="stHorizontalBlock"]:has(.readiness-card) [data-testid="stMarkdownContainer"],
+[data-testid="stHorizontalBlock"]:has(.security-score-card) [data-testid="stMarkdownContainer"] {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* 5. Cards fill the available height */
+[data-testid="stHorizontalBlock"]:has(.kpi-card) .kpi-card,
+[data-testid="stHorizontalBlock"]:has(.policy-card) .policy-card,
+[data-testid="stHorizontalBlock"]:has(.region-card) .region-card,
+[data-testid="stHorizontalBlock"]:has(.exec-card) .exec-card,
+[data-testid="stHorizontalBlock"]:has(.readiness-card) .readiness-card,
+[data-testid="stHorizontalBlock"]:has(.security-score-card) .security-score-card {
+    flex: 1 !important;
+    height: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* ============================================================
+   SCENARIO LAB – gap collapse (outer panel + active strip)
+   ============================================================ */
+
+/* Outer panel row produces no gap below it */
+[data-testid="stHorizontalBlock"]:has(.slp-outer-marker) {
+    margin-bottom: 0 !important;
+}
+
+/* Active strip sits flush under the outer panel */
+[data-testid="stMarkdownContainer"]:has(.slp-active-strip) {
+    margin-top: -1px !important;
+}
+
+/* Active strip gets bottom rounding */
+.slp-active-strip {
+    border-radius: 0 0 var(--radius-panel) var(--radius-panel) !important;
+}
+
+/* ============================================================
+   UI/UX PRO MAX – Accessibility & Motion Improvements
+   ============================================================ */
+
+/* 1. Focus rings — keyboard navigation visibility */
+[data-testid="stSidebar"] [data-testid="stRadio"] label:focus-visible,
+[data-testid="stSidebar"] [data-testid="stRadio"] label:focus {
+    outline: 2px solid var(--accent) !important;
+    outline-offset: 1px !important;
+    border-radius: 3px !important;
+}
+
+[data-testid="stSidebar"] [data-baseweb="select"]:focus-within>div {
+    outline: 2px solid var(--accent) !important;
+    outline-offset: 1px !important;
+}
+
+/* Global focus-visible for all Streamlit interactive elements */
+button:focus-visible,
+[role="radio"]:focus-visible,
+select:focus-visible,
+input:focus-visible {
+    outline: 2px solid var(--accent) !important;
+    outline-offset: 2px !important;
+}
+
+/* 2. prefers-reduced-motion — respect user OS setting */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 3. Fira Code for all numeric KPI values (sharper data readability) */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap');
+
+.kpi-card-value,
+.kpi-value,
+.readiness-score,
+.metric-value,
+.trend-summary-value,
+.security-score-value {
+    font-family: 'Fira Code', 'JetBrains Mono', monospace !important;
+    font-variant-numeric: tabular-nums !important;
+    font-feature-settings: "tnum" 1 !important;
+}
+
+/* 4. cursor: pointer on all clickable sidebar elements */
+[data-testid="stSidebar"] [data-testid="stRadio"] label {
+    cursor: pointer !important;
+}
+
+[data-testid="stSidebar"] [data-baseweb="select"] {
+    cursor: pointer !important;
+}
