@@ -10,13 +10,17 @@ Built with Python, Streamlit, and Plotly using publicly disclosed NGCP operation
 
 ## Preview
 
-Screenshots of the running app live in [`docs/screenshots/`](docs/screenshots/). To show them here, drop the three PNGs named below into that folder and uncomment this block:
+**Executive dashboard** — national KPIs, energy-intelligence map, and live risk panel
 
-<!--
 ![Executive dashboard](docs/screenshots/executive.png)
+
+**Energy Security** — composite score per grid, with the Demand Growth framing and model-scope caveat
+
 ![Energy Security](docs/screenshots/energy-security.png)
+
+**Generation analytics** — fuel mix, renewable share, and monthly generation by plant type
+
 ![Generation analytics](docs/screenshots/generation.png)
--->
 
 ## Why I built this
 
