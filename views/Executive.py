@@ -439,7 +439,7 @@ function pick(idx){{
                     color_scale, color_range = map_layer_style(layer_name, df_region["map_value"])
                     zmin, zmax = (color_range if color_range else (None, None))
 
-                    trace = go.Choroplethmapbox(
+                    trace = go.Choroplethmap(
                         geojson=geojson_with_key,
                         locations=df_region["region_key"],
                         z=df_region["map_value"],
@@ -468,7 +468,7 @@ function pick(idx){{
 
                 fig_map = go.Figure(data=traces)
                 fig_map.update_layout(
-                    mapbox=dict(
+                    map=dict(
                         style="carto-darkmatter",
                         zoom=map_zoom,
                         center=map_center,

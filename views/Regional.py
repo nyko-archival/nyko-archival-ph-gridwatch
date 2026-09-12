@@ -249,14 +249,14 @@ def show():
                     name = feature["properties"].get("name", "")
                     feature["properties"]["match_key"] = name.strip()
 
-                fig = px.choropleth_mapbox(
+                fig = px.choropleth_map(
                     df_region,
                     geojson=geojson_with_key,
                     locations="region_key",
                     color="delivery_mwh",
                     color_continuous_scale=[[0.0, "#0B3B60"], [0.35, "#1E88E5"], [0.7, "#43A047"], [1.0, "#FDD835"]],
                     range_color=delivery_color_range(df_region["delivery_mwh"]),
-                    mapbox_style="carto-darkmatter",
+                    map_style="carto-darkmatter",
                     zoom=5.0,
                     center={"lat": 12.5, "lon": 122.5},
                     opacity=0.8,
@@ -293,7 +293,7 @@ def show():
                 ])
                 df_scatter = df_region_with_data.merge(coord_df, on="region_key", how="inner")
                 if not df_scatter.empty:
-                    fig = px.scatter_mapbox(
+                    fig = px.scatter_map(
                         df_scatter,
                         lat="lat", lon="lon",
                         size="delivery_mwh",
@@ -303,7 +303,7 @@ def show():
                         size_max=25,
                         zoom=5.0,
                         center={"lat": 12.5, "lon": 122.5},
-                        mapbox_style="carto-darkmatter",
+                        map_style="carto-darkmatter",
                         hover_name="region_key",
                         labels={"delivery_mwh": "Energy Delivery (MWh)"},
                     )
