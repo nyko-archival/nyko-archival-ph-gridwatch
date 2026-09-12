@@ -5,6 +5,7 @@ All functions return pandas DataFrames. Error handling returns empty DataFrames.
 """
 
 import os
+import streamlit as st
 import pandas as pd
 import numpy as np
 from config import (
@@ -15,6 +16,7 @@ from config import (
 # ----------------------------------------------------------------------
 # Generation
 # ----------------------------------------------------------------------
+@st.cache_data(show_spinner=False)
 def load_generation():
     """
     Load generation data from Excel.
@@ -89,6 +91,7 @@ def _parse_gen_sheet(df, year, frames):
 # ----------------------------------------------------------------------
 # System Loss
 # ----------------------------------------------------------------------
+@st.cache_data(show_spinner=False)
 def load_system_loss():
     """
     Load system loss data from Excel.
@@ -158,6 +161,7 @@ def load_system_loss():
 # ----------------------------------------------------------------------
 # Hourly Demand
 # ----------------------------------------------------------------------
+@st.cache_data(show_spinner=False)
 def load_hourly_demand(grid="Luzon"):
     """
     Load hourly demand for a specific grid.
@@ -211,6 +215,7 @@ def load_hourly_demand(grid="Luzon"):
     df["DailyAvg_MW"]  = df[numeric_cols].apply(pd.to_numeric, errors="coerce").mean(axis=1)
     return df
 
+@st.cache_data(show_spinner=False)
 def load_hourly_demand_all():
     """Load hourly demand for all grids and concatenate."""
     frames = []
@@ -226,6 +231,7 @@ def load_hourly_demand_all():
 # ----------------------------------------------------------------------
 # Energy Delivery
 # ----------------------------------------------------------------------
+@st.cache_data(show_spinner=False)
 def load_delivery():
     """Load energy delivery per region."""
     if not os.path.exists(DELIVERY_FILE):
