@@ -29,3 +29,7 @@ views/# Code Citations.md
 
 # ── Logs ────────────────────────────────────────────────
 *.log
+
+# ── macOS Finder artifacts ──────────────────────────────
+Icon
+Icon?
